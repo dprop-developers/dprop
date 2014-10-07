@@ -1,0 +1,42 @@
+The problem:
+- Python has very high developer productivity and many useful libraries
+- The trend in computing power is towards many cores, not very much faster cores
+- Python is slow and does not lend itself to easy parallelization due to the Global Interpreter Lock (GIL)
+
+Answer 1:
+- Cython is very significantly faster and makes it possible to disengage the GIL
+- Cython makes it easy for non time-critical code sections to be written in high-productivity Python
+
+But:
+- Touching any Python object directly requires having the GIL
+- Therefore object-oriented programming in Cython becomes more difficult (even cdef Cython classes are Python objects)
+
+Answer 2:
+- Avoid using Cython classes and just use C style structs and function calls
+- Use numpy or malloced data where possible
+- Typed memoryviews allow access to numpy objects without needing the GIL
+
+But:
+- Creating memoryviews needs the GIL
+- Numpy arrays are not always very convenient to use for financial market purposes
+- Coding without using objects is awkward, harder to maintain etc
+
+So:
+- Write implementations of key objects in a C-family language
+- C-family does not require the GIL
+
+However:
+- I do not know C++
+- C++ is an unproductive language to code in
+- C is dangerous
+
+so:
+- D ?  naive D is fast enough, and can approach C speeds via manual optimisation when it matters.  Garbage collection
+  and standard library are not fast, but it is easy enough to replace these when needed.  D is a very well thought-through
+  language with decent productivity and safety.
+  
+Obstacles:
+- nothing has been written on writing libraries in D callable by Cython
+- not much has been written on writing D libraries generally
+- it looks like one needs to recompile phobos and the D runtime with -fPIC for this to work.  I do not know the
+  ultimate implications of doing so
